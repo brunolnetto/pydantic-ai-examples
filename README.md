@@ -40,10 +40,10 @@ To run any of the examples in this repository:
    git clone https://github.com/your-username/pydantic-ai-examples.git
    ```
 
-2. Install the required dependencies:
+2. Create a virtual environemnt and activate:
 
    ```bash
-   pip install -r requirements.txt
+   uv venv && source .venv/bin/activate
    ```
 
 3. Navigate to the example directory you want to run and follow any specific setup instructions in its README or comments in the script.
