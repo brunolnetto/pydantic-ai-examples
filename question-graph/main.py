@@ -110,7 +110,7 @@ async def run_as_continuous():
 async def run_as_cli(answer: str | None):
     persistence = FileStatePersistence(Path('question_graph.json'))
     persistence.set_graph_types(question_graph)
-
+    print(persistence.load_next())
     if snapshot := await persistence.load_next():
         state = snapshot.state
         assert answer is not None, (

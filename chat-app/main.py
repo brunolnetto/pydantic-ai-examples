@@ -214,7 +214,7 @@ if __name__ == '__main__':
     import uvicorn
 
     uvicorn.run(
-        'chat_app:app', 
+        'main:app', 
         reload=True, 
         reload_dirs=[str(THIS_DIR)]
     )

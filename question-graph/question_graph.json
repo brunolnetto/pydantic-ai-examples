@@ -1,0 +1,56 @@
+[
+  {
+    "state": {
+      "question": null,
+      "ask_agent_messages": [],
+      "evaluate_agent_messages": []
+    },
+    "node": {
+      "node_id": "Ask"
+    },
+    "start_ts": "2025-05-14T18:30:24.199321Z",
+    "duration": 0.7147521989973029,
+    "status": "success",
+    "kind": "node",
+    "id": "Ask:20731c99163d41709221ad5b14bbbf88"
+  },
+  {
+    "state": {
+      "question": "What is the capital city of France?",
+      "ask_agent_messages": [
+        {
+          "parts": [
+            {
+              "content": "Ask a simple question with a single correct answer.",
+              "timestamp": "2025-05-14T18:30:24.201418Z",
+              "part_kind": "user-prompt"
+            }
+          ],
+          "instructions": null,
+          "kind": "request"
+        },
+        {
+          "parts": [
+            {
+              "content": "What is the capital city of France?",
+              "part_kind": "text"
+            }
+          ],
+          "model_name": "gpt-4o-mini-2024-07-18",
+          "timestamp": "2025-05-14T18:30:24Z",
+          "kind": "response"
+        }
+      ],
+      "evaluate_agent_messages": []
+    },
+    "node": {
+      "question": "What is the capital city of France?",
+      "node_id": "Answer"
+    },
+    "start_ts": null,
+    "duration": null,
+    "status": "created",
+    "kind": "node",
+    "id": "Answer:3c37fdeb9ce14ed9ba5655a04870d4b9"
+  }
+]
