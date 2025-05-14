@@ -20,7 +20,7 @@ from pydantic_ai.messages import ModelMessage
 logfire.configure(send_to_logfire='if-token-present')
 logfire.instrument_pydantic_ai()
 
-ask_agent = Agent('openai:gpt-4o', output_type=str)
+ask_agent = Agent('openai:gpt-4o-mini', output_type=str)
 
 
 @dataclass

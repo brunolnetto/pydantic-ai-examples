@@ -9,13 +9,12 @@ from pydantic_ai import Agent
 logfire.configure(send_to_logfire='if-token-present')
 logfire.instrument_pydantic_ai()
 
-
 class MyModel(BaseModel):
     city: str
     country: str
 
 
-model = os.getenv('PYDANTIC_AI_MODEL', 'openai:gpt-4o')
+model = os.getenv('PYDANTIC_AI_MODEL', 'openai:gpt-4o-mini')
 print(f'Using model: {model}')
 agent = Agent(model, output_type=MyModel)
 

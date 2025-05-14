@@ -81,7 +81,7 @@ class InvalidRequest(BaseModel):
 
 Response: TypeAlias = Union[Success, InvalidRequest]
 agent: Agent[Deps, Response] = Agent(
-    'google-gla:gemini-1.5-flash',
+    'openai:gpt-4o-mini',
     # Type ignore while we wait for PEP-0747, nonetheless unions will work fine everywhere else
     output_type=Response,  # type: ignore
     deps_type=Deps,
@@ -129,7 +129,7 @@ async def main():
         prompt = sys.argv[1]
 
     async with database_connect(
-        'postgresql://postgres:postgres@localhost:54320', 'pydantic_ai_sql_gen'
+        'postgresql://postgres:postgres@localhost:5432', 'pydantic_ai_sql_gen'
     ) as conn:
         deps = Deps(conn)
         result = await agent.run(prompt, deps=deps)
