@@ -111,17 +111,43 @@ function onError(error: any) {
   errorEl.appendChild(errorMessage);
 }
 
-async function onSubmit(e: SubmitEvent): Promise<void> {
-  e.preventDefault()
-  spinner.classList.add('active')
+const thinkingEl = document.getElementById('thinking')!
 
-  const body = new FormData(e.target as HTMLFormElement)
-  promptInput.value = ''
-  promptInput.disabled = true
-
-  const response = await fetch('/chat/', { method: 'POST', body })
-  await onFetchResponse(response)
+function showThinking() {
+  thinkingEl.style.display = 'block'
 }
+
+function hideThinking() {
+  thinkingEl.style.display = 'none'
+}
+
+async function onSubmit(e: SubmitEvent): Promise<void> {
+  e.preventDefault();
+
+  const inputValue = promptInput.value.trim();
+  if (!inputValue) {
+    promptInput.focus();
+    onError(new Error('Empty input is not allowed.'));
+    return;
+  }
+
+  spinner.classList.add('active');
+  showThinking();
+
+  const body = new FormData(e.target as HTMLFormElement);
+  promptInput.value = '';
+  promptInput.disabled = true;
+
+  try {
+    const response = await fetch('/chat/', { method: 'POST', body });
+    await onFetchResponse(response);
+  } catch (err) {
+    onError(err);
+  } finally {
+    hideThinking();
+  }
+}
+
 
 document.querySelector('form')!.addEventListener('submit', (e) => onSubmit(e).catch(onError))
 
