@@ -1,0 +1,13 @@
+[project]
+name = "stream-whales"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "logfire>=3.16.0",
+    "pydantic>=2.11.4",
+    "pydantic-ai>=0.2.3",
+    "rich>=14.0.0",
+    "typing-extensions>=4.13.2",
+]

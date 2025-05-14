@@ -1,0 +1,14 @@
+[project]
+name = "sql-generation"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "annotated-types>=0.7.0",
+    "asyncpg>=0.30.0",
+    "devtools>=0.12.2",
+    "logfire[asyncpg]>=3.16.0",
+    "pydantic>=2.11.4",
+    "pydantic-ai>=0.2.3",
+]
