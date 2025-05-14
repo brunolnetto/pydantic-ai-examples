@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Chat App</title>
+
+  <!-- Bootstrap + Inter font -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary-color: #3f51b5;
+      --user-bg: #e3f2fd;
+      --model-bg: #f5f5f5;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+      --text-color: #212529;
+      --secondary-text: #6c757d;
+      --border-color: #dee2e6;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f8f9fa;
+      transition: background-color 0.3s, color 0.3s;
+      color: var(--text-color);
+    }
+
+    main {
+      max-width: 700px;
+      background-color: #ffffff;
+      box-shadow: 0 0.25rem 1rem var(--shadow-color);
+      border-radius: 1rem;
+      padding: 2rem;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+
+    #conversation-wrapper {
+      border: 1px solid var(--border-color);
+      border-radius: 0.75rem;
+      margin-bottom: 1.5rem;
+      background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    #conversation {
+      display: flex;
+      flex-direction: column;
+      height: 400px;
+      overflow-y: auto;
+      padding: 1rem;
+      scroll-behavior: smooth;
+    }
+
+    .message-wrapper {
+      margin-bottom: 1rem;
+      width: 100%;
+    }
+
+    #conversation .user,
+    #conversation .model {
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 0.75rem;
+      position: relative;
+      max-width: 80%;
+    }
+
+    .message-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .message-header i {
+      margin-right: 0.5rem;
+    }
+
+    .message-content {
+      line-height: 1.5;
+    }
+
+    #conversation .user {
+      background-color: var(--user-bg);
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    #conversation .model {
+      background-color: var(--model-bg);
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    .thinking {
+      display: flex;
+      align-items: center;
+      background-color: var(--model-bg);
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      max-width: 80%;
+      align-self: flex-start;
+      margin-right: auto;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .thinking.active {
+      opacity: 1;
+    }
+
+    .dot-typing {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 0.5rem;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background-color: var(--secondary-text);
+      margin-right: 4px;
+      animation: dot-typing 1.5s infinite linear;
+    }
+
+    .dot:nth-child(2) {
+      animation-delay: 0.5s;
+    }
+
+    .dot:nth-child(3) {
+      animation-delay: 1s;
+      margin-right: 0;
+    }
+
+    @keyframes dot-typing {
+      0%, 100% { opacity: 0.2; transform: scale(0.8); }
+      50% { opacity: 1; transform: scale(1); }
+    }
+
+    .form-container {
+      position: relative;
+    }
+
+    input.form-control {
+      padding: 0.75rem 3rem 0.75rem 1rem;
+      border-radius: 1rem;
+      border: 1px solid var(--border-color);
+      font-size: 1rem;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    input.form-control:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.25rem rgba(63, 81, 181, 0.25);
+    }
+
+    .send-button {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .send-button:hover {
+      background-color: #303f9f;
+    }
+
+    .send-button:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+    }
+
+    #spinner {
+      width: 20px;
+      height: 20px;
+      border: 2px solid #fff;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      animation: rotation 1s linear infinite;
+      display: none;
+    }
+
+    #spinner.active {
+      display: block;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    #error {
+      margin-top: 1rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      background-color: #ffebee;
+      border: 1px solid #ffcdd2;
+    }
+
+    .app-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .toggle-theme {
+      font-size: 1.25rem;
+      cursor: pointer;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f0f0f0;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .toggle-theme:hover {
+      background-color: #e0e0e0;
+      transform: rotate(15deg);
+    }
+
+    /* Dark Mode */
+    body.dark-mode {
+      --primary-color: #7986cb;
+      --user-bg: #1a237e;
+      --model-bg: #263238;
+      --shadow-color: rgba(0, 0, 0, 0.2);
+      --text-color: #e0e0e0;
+      --secondary-text: #b0bec5;
+      --border-color: #424242;
+      
+      background-color: #121212;
+    }
+
+    body.dark-mode main {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode #conversation-wrapper {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+
+    body.dark-mode input.form-control {
+      background-color: #2a2a2a;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .toggle-theme {
+      background-color: #333;
+      color: #e0e0e0;
+    }
+
+    body.dark-mode .message-header {
+      color: #e0e0e0;
+    }
+    
+  </style>
+</head>
+<body>
+  <main class="mx-auto my-5">
+    <div class="app-header">
+      <h1><i class="fas fa-comments me-2"></i>Chat App</h1>
+      <button class="toggle-theme border-0" id="theme-toggle" aria-label="Toggle theme">
+        <i class="fas fa-sun"></i>
+      </button>
+    </div>
+    <p class="text-muted mb-4">Ask me anything...</p>
+
+    <div id="conversation-wrapper">
+      <div id="conversation">
+        <!-- Messages will appear here -->
+        <!-- Thinking indicator -->
+        <div id="thinking" class="thinking">
+          <div class="message-header">
+            <i class="fas fa-robot"></i>AI thinking
+          </div>
+          <div class="dot-typing">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="chat-form" method="post">
+      <div class="form-container">
+        <input
+          id="prompt-input"
+          name="prompt"
+          class="form-control"
+          placeholder="Type your message here..."
+          autocomplete="off"
+        />
+        <button type="submit" class="send-button" id="send-button">
+          <div id="spinner"></div>
+          <i class="fas fa-paper-plane" id="send-icon"></i>
+        </button>
+      </div>
+    </form>
+
+    <div id="error" class="d-none">
+      <i class="fas fa-exclamation-circle me-2"></i>
+      Error occurred, check the browser developer console for more information.
+    </div>
+  </main>
+
+  <script>
+    // Theme Toggle Functionality
+    function toggleTheme() {
+      const body = document.body;
+      const icon = document.querySelector('#theme-toggle i');
+
+      body.classList.toggle('dark-mode');
+      
+      // Switch icon based on theme
+      if (body.classList.contains('dark-mode')) {
+        icon.className = 'fas fa-moon';
+        localStorage.setItem('theme', 'dark');
+      } else {
+        icon.className = 'fas fa-sun';
+        localStorage.setItem('theme', 'light');
+      }
+    }
+
+    // Load saved theme preference
+    function loadTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themeToggle = document.getElementById('theme-toggle');
+      
+      if (savedTheme === 'dark') {
+        document.body.classList.add('dark-mode');
+        themeToggle.querySelector('i').className = 'fas fa-moon';
+      }
+      
+      themeToggle.addEventListener('click', toggleTheme);
+    }
+    
+    // Scroll to bottom of conversation
+    function scrollToBottom() {
+      const conversation = document.getElementById('conversation');
+      conversation.scrollTop = conversation.scrollHeight;
+    }
+
+    // Show thinking indicator
+    function showThinking(show) {
+      const thinking = document.getElementById('thinking');
+      if (show) {
+        thinking.classList.add('active');
+      } else {
+        thinking.classList.remove('active');
+      }
+      if (show) scrollToBottom();
+    }
+
+    // Initialize the app
+    window.addEventListener('DOMContentLoaded', () => {
+      loadTheme();
+      scrollToBottom();
+      
+      // Hide thinking indicator on load
+      showThinking(false);
+      
+      // Add some example messages if conversation is empty
+      setTimeout(() => {
+        const conversation = document.getElementById('conversation');
+        if (conversation.children.length <= 1) { // Only thinking indicator
+          addMessage("Hello! How can you help me?", "Hi there! I'm your AI assistant. Feel free to ask me anything!");
+        }
+      }, 500);
+    });
+
+    // Ensure scroll always follows new content
+    const conversationElem = document.getElementById('conversation');
+    const observer = new MutationObserver(scrollToBottom);
+    observer.observe(conversationElem, { childList: true, subtree: true });
+  </script>
+</body>
+
+<!-- TypeScript transpiler -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/typescript/5.6.3/typescript.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script type="module">
+  async function loadTs() {
+    try {
+      const response = await fetch('/chat_app.ts');
+      const tsCode = await response.text();
+      const jsCode = window.ts.transpile(tsCode, { target: "es2015" });
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.text = jsCode;
+      document.body.appendChild(script);
+    } catch (e) {
+      console.error('Error loading TypeScript:', e);
+      document.getElementById('error')?.classList.remove('d-none');
+    }
+  }
+
+  loadTs().catch((e) => {
+    console.error(e);
+    document.getElementById('error')?.classList.remove('d-none');
+  });
+</script>

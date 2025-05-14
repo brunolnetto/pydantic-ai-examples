@@ -1,0 +1,11 @@
+[project]
+name = "pydantic-chat-app"
+version = "0.1.0"
+description = "This is a chat app to with pydantic (https://ai.pydantic.dev/examples/chat-app/)"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115.12",
+    "logfire[fastapi,sqlite3]>=3.14.1",
+    "pydantic-ai>=0.1.9",
+]
